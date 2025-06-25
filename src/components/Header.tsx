@@ -1,11 +1,13 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { House, Wrench } from 'phosphor-react'
+import { House, Wrench, Sun, Moon } from 'phosphor-react'
+import { useTheme } from '../context/ThemeContext'
 
 const Header: React.FC = () => {
   const { t } = useTranslation()
   const location = useLocation()
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <header className="navbar is-primary" role="navigation" aria-label="main navigation">
@@ -36,6 +38,15 @@ const Header: React.FC = () => {
             </span>
             <span>{t('nav.tools')}</span>
           </Link>
+        </div>
+        <div className="navbar-end">
+          <button
+            className="navbar-item button is-white is-small"
+            onClick={toggleTheme}
+            aria-label="toggle theme"
+          >
+            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
         </div>
       </div>
     </header>

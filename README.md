@@ -13,6 +13,7 @@ A comprehensive, elegant PDF manipulation tool built with React, TypeScript, and
 - **Drag & Drop**: Intuitive file upload interface
 - **Progress Tracking**: Real-time processing feedback
 - **Responsive Design**: Works on desktop, tablet, and mobile
+- **Dark Mode Toggle**: Switch between light and dark themes
 
 ### 🚧 Coming Soon
 - **Edit PDF**: Canvas-based PDF editor with text, images, and annotations
@@ -26,6 +27,7 @@ A comprehensive, elegant PDF manipulation tool built with React, TypeScript, and
 - **Vite** for fast development and building
 - **Bulma CSS** for elegant styling
 - **Phosphor Icons** for consistent iconography
+- **Roboto Font** for modern typography
 - **pdf-lib** for client-side PDF manipulation
 - **react-beautiful-dnd** for drag-and-drop functionality
 - **i18next** for internationalization
