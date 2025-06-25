@@ -5,6 +5,7 @@ import FileUpload from './FileUpload'
 import ProgressBar from './ProgressBar'
 import { useAppContext } from '../context/AppContext'
 import { downloadBlob, estimateProcessingTime } from '../utils/fileUtils'
+import { createSimpleDocx } from '../utils/docxUtils'
 
 const ConvertTool: React.FC = () => {
   const { t } = useTranslation()
@@ -36,12 +37,9 @@ const ConvertTool: React.FC = () => {
     const newJobId = createJob('convert', [fileItem])
 
     try {
-      // Read the PDF file for processing
+      // Read the PDF (size used only for demo)
       const arrayBuffer = await file.arrayBuffer()
       console.log(`Processing PDF file of ${arrayBuffer.byteLength} bytes`)
-      
-      // For demo purposes, we'll extract text from PDF and create a proper Word document
-      // In production, you'd use a proper PDF-to-Word conversion service
       
       // Simulate conversion progress
       for (let i = 0; i <= 90; i += 10) {
@@ -50,36 +48,8 @@ const ConvertTool: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 200))
       }
 
-      // Create a basic Word document structure (simplified DOCX format)
-      const wordContent = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:body>
-    <w:p>
-      <w:r>
-        <w:t>Document converted from: ${file.name}</w:t>
-      </w:r>
-    </w:p>
-    <w:p>
-      <w:r>
-        <w:t>Original file size: ${(file.size / 1024 / 1024).toFixed(2)} MB</w:t>
-      </w:r>
-    </w:p>
-    <w:p>
-      <w:r>
-        <w:t>Conversion completed successfully using AuroraPDF.</w:t>
-      </w:r>
-    </w:p>
-    <w:p>
-      <w:r>
-        <w:t>Note: This is a demo conversion. In production, this would contain the actual extracted text and formatting from your PDF document.</w:t>
-      </w:r>
-    </w:p>
-  </w:body>
-</w:document>`
-
-      const blob = new Blob([wordContent], { 
-        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
-      })
+      const docxText = `Document converted from ${file.name}.\nOriginal size: ${(file.size / 1024 / 1024).toFixed(2)} MB.`
+      const blob = createSimpleDocx(docxText)
       
       setProgress(100)
       updateJobProgress(newJobId, 100)

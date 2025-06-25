@@ -5,6 +5,7 @@ import FileUpload from './FileUpload'
 import ProgressBar from './ProgressBar'
 import { useAppContext } from '../context/AppContext'
 import { downloadBlob, estimateProcessingTime, formatFileSize } from '../utils/fileUtils'
+import { PDFDocument } from 'pdf-lib'
 
 const CompressTool: React.FC = () => {
   const { t } = useTranslation()
@@ -37,36 +38,20 @@ const CompressTool: React.FC = () => {
     const newJobId = createJob('compress', [fileItem])
 
     try {
-      // Read the original PDF
       const arrayBuffer = await file.arrayBuffer()
-      
-      // Calculate compression ratio based on level
-      const compressionRatios = { low: 0.85, medium: 0.65, high: 0.45 }
-      const ratio = compressionRatios[compressionLevel]
-      
-      // Simulate compression process with realistic progress
+      const pdfDoc = await PDFDocument.load(arrayBuffer)
+
+      // pdf-lib compresses objects when saving. We re-save the document to
+      // remove unused data and apply object stream compression. Progress is
+      // simulated for user feedback.
       for (let i = 0; i <= 90; i += 15) {
         setProgress(i)
         updateJobProgress(newJobId, i)
-        await new Promise(resolve => setTimeout(resolve, 300))
+        await new Promise(resolve => setTimeout(resolve, 200))
       }
 
-      // Create a "compressed" version (for demo - reduces byte array size)
-      const originalSize = arrayBuffer.byteLength
-      const targetSize = Math.floor(originalSize * ratio)
-      const compressedArray = new Uint8Array(targetSize)
-      
-      // Copy PDF header and some content to make it somewhat valid
-      const originalArray = new Uint8Array(arrayBuffer)
-      const headerSize = Math.min(1024, targetSize, originalSize)
-      compressedArray.set(originalArray.slice(0, headerSize))
-      
-      // Fill rest with compressed data simulation
-      for (let i = headerSize; i < targetSize; i++) {
-        compressedArray[i] = originalArray[i % originalSize]
-      }
-
-      const blob = new Blob([compressedArray], { type: 'application/pdf' })
+      const pdfBytes = await pdfDoc.save({ useObjectStreams: true })
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' })
       
       setProgress(100)
       updateJobProgress(newJobId, 100)

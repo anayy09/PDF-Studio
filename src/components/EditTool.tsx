@@ -5,6 +5,7 @@ import FileUpload from './FileUpload'
 import ProgressBar from './ProgressBar'
 import { useAppContext } from '../context/AppContext'
 import { downloadBlob, estimateProcessingTime } from '../utils/fileUtils'
+import { PDFDocument } from 'pdf-lib'
 
 const EditTool: React.FC = () => {
   const { t } = useTranslation()
@@ -97,14 +98,24 @@ const EditTool: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 200))
       }
 
-      // Convert canvas to blob and combine with original PDF
       const canvas = canvasRef.current
-      const imageData = canvas.toDataURL('image/jpeg', 0.8)
-      console.log('Canvas edits captured:', imageData.length, 'bytes')
-      
-      // In reality, you'd overlay the canvas changes onto the original PDF
+      const imageData = canvas.toDataURL('image/png')
+
       const originalArrayBuffer = await file.arrayBuffer()
-      const blob = new Blob([originalArrayBuffer], { type: 'application/pdf' })
+      const pdfDoc = await PDFDocument.load(originalArrayBuffer)
+      const pngBytes = await fetch(imageData).then(res => res.arrayBuffer())
+      const pngImage = await pdfDoc.embedPng(pngBytes)
+      const page = pdfDoc.getPage(0)
+      const { width, height } = page.getSize()
+      const scale = Math.min(width / canvas.width, height / canvas.height)
+      page.drawImage(pngImage, {
+        x: 0,
+        y: height - canvas.height * scale,
+        width: canvas.width * scale,
+        height: canvas.height * scale
+      })
+      const pdfBytes = await pdfDoc.save()
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' })
       
       setProgress(100)
       updateJobProgress(newJobId, 100)

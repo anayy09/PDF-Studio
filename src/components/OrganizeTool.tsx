@@ -22,6 +22,7 @@ import FileUpload from './FileUpload'
 import ProgressBar from './ProgressBar'
 import { useAppContext } from '../context/AppContext'
 import { downloadBlob, estimateProcessingTime } from '../utils/fileUtils'
+import { PDFDocument } from 'pdf-lib'
 
 interface PageItem {
   id: string
@@ -118,19 +119,26 @@ const OrganizeTool: React.FC = () => {
     })
   )
 
-  const handleFileSelected = useCallback((files: File[]) => {
+  const handleFileSelected = useCallback(async (files: File[]) => {
     if (files.length > 0) {
       const selectedFile = files[0]
       setFile(selectedFile)
-      
-      // Simulate extracting pages from PDF
-      const mockPages: PageItem[] = Array.from({ length: 5 }, (_, i) => ({
-        id: `page-${i + 1}`,
-        pageNumber: i + 1,
-        thumbnail: '',
-        selected: false
-      }))
-      setPages(mockPages)
+
+      try {
+        const arrayBuffer = await selectedFile.arrayBuffer()
+        const pdf = await PDFDocument.load(arrayBuffer)
+        const pageCount = pdf.getPageCount()
+        const loadedPages: PageItem[] = Array.from({ length: pageCount }, (_, i) => ({
+          id: `page-${i + 1}-${Date.now()}`,
+          pageNumber: i,
+          thumbnail: '',
+          selected: false
+        }))
+        setPages(loadedPages)
+      } catch (err) {
+        console.error('Failed to load PDF:', err)
+        setPages([])
+      }
     }
   }, [])
 
@@ -188,16 +196,23 @@ const OrganizeTool: React.FC = () => {
     const newJobId = createJob('organize', [fileItem])
 
     try {
-      // Simulate organization process
       for (let i = 0; i <= 90; i += 15) {
         setProgress(i)
         updateJobProgress(newJobId, i)
         await new Promise(resolve => setTimeout(resolve, 200))
       }
 
-      // In reality, you'd reorganize the PDF pages according to the new order
       const originalArrayBuffer = await file.arrayBuffer()
-      const blob = new Blob([originalArrayBuffer], { type: 'application/pdf' })
+      const srcPdf = await PDFDocument.load(originalArrayBuffer)
+      const newPdf = await PDFDocument.create()
+
+      for (const p of pages) {
+        const [copied] = await newPdf.copyPages(srcPdf, [p.pageNumber])
+        newPdf.addPage(copied)
+      }
+
+      const pdfBytes = await newPdf.save()
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' })
       
       setProgress(100)
       updateJobProgress(newJobId, 100)
