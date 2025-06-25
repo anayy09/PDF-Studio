@@ -73,22 +73,47 @@ const Header: React.FC = () => {
                 onClick={toggleTheme}
                 aria-label="toggle theme"
                 title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+                style={{
+                  position: 'relative',
+                  overflow: 'hidden',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background-color 0.3s ease'
+                }}
               >
-                {theme === 'light' ? (
+                <div style={{
+                  position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '100%',
+                  opacity: theme === 'light' ? 1 : 0,
+                  transform: `translateY(${theme === 'light' ? '0' : '-100%'})`,
+                  transition: 'transform 0.3s ease, opacity 0.3s ease'
+                }}>
                   <Moon size={18} weight="regular" />
-                ) : (
+                </div>
+                <div style={{
+                  position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '100%',
+                  opacity: theme === 'dark' ? 1 : 0,
+                  transform: `translateY(${theme === 'dark' ? '0' : '100%'})`,
+                  transition: 'transform 0.3s ease, opacity 0.3s ease'
+                }}>
                   <Sun size={18} weight="regular" />
-                )}
+                </div>
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </header>
-  )
-}
-
-export default Header
       </div>
     </header>
   )

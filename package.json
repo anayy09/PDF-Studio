@@ -16,6 +16,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@types/react-dropzone": "^5.1.0",
+    "@types/react-transition-group": "^4.4.12",
     "bulma": "^0.9.4",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
@@ -30,6 +31,7 @@
     "react-dropzone": "^14.3.8",
     "react-i18next": "^12.1.4",
     "react-router-dom": "^6.8.1",
+    "react-transition-group": "^4.4.5",
     "swr": "^2.0.3"
   },
   "devDependencies": {

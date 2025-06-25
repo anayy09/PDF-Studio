@@ -57,22 +57,51 @@ const FileUpload: React.FC<FileUploadProps> = ({
     <div className={`file-upload ${className}`}>
       <div 
         {...getRootProps()}
-        className={`file-dropzone p-6 has-text-centered cursor-pointer ${isDragActive ? 'is-dragover' : ''}`}
+        className={`file-dropzone has-text-centered cursor-pointer ${isDragActive ? 'is-dragover' : ''}`}
+        style={{
+          padding: '2.5rem',
+          borderRadius: '18px',
+          transition: 'all 0.2s ease',
+          background: 'rgba(66, 133, 244, 0.04)'
+        }}
       >
         <input {...getInputProps()} />
-        <div className="icon is-large has-text-primary mb-4">
-          <CloudArrowUp size={48} />
+        <div 
+          style={{ 
+            margin: '0 auto 1.5rem',
+            width: '80px',
+            height: '80px',
+            borderRadius: '50%',
+            background: 'rgba(66, 133, 244, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <CloudArrowUp size={40} weight="duotone" color="#4285f4" />
         </div>
         
         {isDragActive ? (
-          <p className="has-text-primary">{t('upload.dragdrop')}</p>
+          <p className="has-text-primary" style={{ fontSize: '1.25rem', fontWeight: '500' }}>
+            {t('upload.dragdrop')}
+          </p>
         ) : (
           <div>
-            <p className="title is-5">{t('upload.dragdrop')}</p>
-            <button className="button is-primary is-outlined mt-2" type="button">
+            <p className="title is-4" style={{ fontWeight: '500', marginBottom: '0.5rem' }}>
+              {t('upload.dragdrop')}
+            </p>
+            <button 
+              className="button is-primary is-rounded mt-3"
+              style={{ 
+                padding: '0.75rem 2rem', 
+                fontWeight: '500',
+                boxShadow: '0 2px 6px rgba(66, 133, 244, 0.4)'
+              }}
+              type="button"
+            >
               {t('upload.selectfiles')}
             </button>
-            <p className="help mt-2">
+            <p className="help mt-3" style={{ color: 'var(--text-color)', opacity: '0.7' }}>
               {t('upload.maxsize')} • {t('upload.supportedtypes')}
             </p>
           </div>
@@ -80,7 +109,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
       </div>
 
       {errors.length > 0 && (
-        <div className="notification is-danger mt-4">
+        <div 
+          className="notification is-danger mt-4"
+          style={{ 
+            borderRadius: '12px', 
+            boxShadow: '0 2px 8px rgba(234, 67, 53, 0.2)'
+          }}
+        >
           {errors.map((error, index) => (
             <p key={index}>{error}</p>
           ))}
@@ -88,39 +123,79 @@ const FileUpload: React.FC<FileUploadProps> = ({
       )}
 
       {uploadedFiles.length > 0 && (
-        <div className="mt-4">
-          <h4 className="title is-6">{t('upload.selectedfiles')}</h4>
-          {uploadedFiles.map((file, index) => (
-            <div key={index} className="box">
-              <div className="level">
-                <div className="level-left">
-                  <div className="level-item">
-                    <span className="icon">
-                      <File size={20} />
-                    </span>
-                  </div>
-                  <div className="level-item">
-                    <div>
-                      <p className="title is-6">{file.name}</p>
-                      <p className="subtitle is-7">{formatFileSize(file.size)}</p>
-                    </div>
-                  </div>
+        <div className="mt-5">
+          <h4 
+            className="title is-6" 
+            style={{ 
+              fontWeight: '500', 
+              display: 'flex', 
+              alignItems: 'center', 
+              marginBottom: '1rem' 
+            }}
+          >
+            <span>{t('upload.selectedfiles')}</span>
+            <span 
+              className="ml-2" 
+              style={{ 
+                background: '#4285f4', 
+                color: 'white', 
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.8rem'
+              }}
+            >
+              {uploadedFiles.length}
+            </span>
+          </h4>
+          
+          <div 
+            style={{ 
+              borderRadius: '12px',
+              border: '1px solid var(--border-color)',
+              overflow: 'hidden'
+            }}
+          >
+            {uploadedFiles.map((file, index) => (
+              <div 
+                key={index} 
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '0.75rem 1rem',
+                  borderBottom: index < uploadedFiles.length - 1 ? '1px solid var(--border-color)' : 'none',
+                  background: 'var(--surface-color)'
+                }}
+              >
+                <div style={{ marginRight: '1rem', color: '#4285f4' }}>
+                  <File size={24} weight="duotone" />
                 </div>
-                <div className="level-right">
-                  <div className="level-item">
-                    <button 
-                      className="button is-small is-danger is-outlined"
-                      onClick={() => removeFile(index)}
-                    >
-                      <span className="icon">
-                        <X size={16} />
-                      </span>
-                    </button>
-                  </div>
+                <div style={{ flexGrow: 1 }}>
+                  <p style={{ fontWeight: '500', fontSize: '0.9rem' }}>{file.name}</p>
+                  <p style={{ fontSize: '0.75rem', opacity: '0.7' }}>{formatFileSize(file.size)}</p>
                 </div>
+                <button 
+                  className="button is-small is-rounded" 
+                  style={{ 
+                    width: '32px', 
+                    height: '32px',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderColor: 'var(--border-color)'
+                  }}
+                  onClick={() => removeFile(index)}
+                  aria-label="Remove file"
+                >
+                  <X size={16} />
+                </button>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -1,29 +1,156 @@
-// Bulma theme customization
-$primary: #4285f4;
-$link: #db4437;
-$family-sans-serif: "Roboto", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+// Google Material Design Inspired Theme
+// Colors based on Google's Material Design palette
+$blue-primary: #4285f4; // Google Blue
+$red-accent: #ea4335;   // Google Red
+$yellow: #fbbc05;       // Google Yellow
+$green: #34a853;        // Google Green
+$gray-light: #f8f9fa;   // Light background
+$gray-medium: #dadce0;  // Borders
+$gray-text: #5f6368;    // Text
+$dark-primary: #202124; // Dark mode background
+$dark-surface: #303134; // Dark mode surface
+$dark-border: #3c4043;  // Dark mode borders
+$dark-text: #e8eaed;    // Dark mode text
 
-// Import Bulma
+// Variables
+$primary: $blue-primary;
+$success: $green;
+$warning: $yellow;
+$danger: $red-accent;
+$link: $blue-primary;
+$family-sans-serif: "Google Sans", "Roboto", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+// Import Bulma (with customizations)
 @import "bulma/bulma.sass";
+
+// Global styles
+@font-face {
+  font-family: "Google Sans";
+  src: url("https://fonts.gstatic.com/s/googlesans/v45/4UaGrENHsxJlGDuGo1OIlL3Owps.woff2") format("woff2");
+}
 
 body {
   font-family: $family-sans-serif;
+  font-size: 16px;
+  color: $gray-text;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+}
+
+// Theme variations
+body.theme-light {
+  --bg-color: #ffffff;
+  --surface-color: #ffffff;
+  --border-color: #{$gray-medium};
+  --text-color: #{$gray-text};
+  --text-title: #202124;
+  --shadow-color: rgba(60, 64, 67, 0.1);
+  --hover-color: #f1f3f4;
 }
 
 body.theme-dark {
-  background-color: #121212;
-  color: #e0e0e0;
+  --bg-color: #{$dark-primary};
+  --surface-color: #{$dark-surface};
+  --border-color: #{$dark-border};
+  --text-color: #{$dark-text};
+  --text-title: #{$dark-text};
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --hover-color: #3c4043;
+  
+  background-color: var(--bg-color);
+  color: var(--text-color);
 
   .navbar {
-    background-color: #1f1f1f;
+    background-color: var(--surface-color);
+    box-shadow: 0 1px 2px var(--shadow-color);
+    
+    .navbar-item, .navbar-link {
+      color: var(--text-color);
+      
+      &:hover {
+        background-color: var(--hover-color);
+      }
+    }
   }
+  
   .card {
-    background-color: #1e1e1e;
-    color: #e0e0e0;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+  }
+  
+  .button {
+    &.is-light {
+      background-color: var(--surface-color);
+      color: var(--text-color);
+      border-color: var(--border-color);
+      
+      &:hover {
+        background-color: var(--hover-color);
+      }
+    }
+  }
+  
+  .title, .subtitle {
+    color: var(--text-title);
   }
 }
 
-// Minimal custom overrides
+// Component Styling
+.navbar {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  padding: 0.5rem 1rem;
+  height: 64px;
+  
+  .navbar-brand {
+    .title {
+      font-weight: 500;
+    }
+  }
+  
+  .navbar-item {
+    transition: background-color 0.2s ease;
+    padding: 0.5rem 1rem;
+    
+    &.is-active {
+      font-weight: 500;
+      color: $primary;
+    }
+  }
+}
+
+// Card styling
+.card {
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px var(--shadow-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+// Tool card styling
+.tool-card {
+  height: 100%;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px var(--shadow-color);
+    border-color: $primary;
+  }
+  
+  .card-content {
+    padding: 1.5rem;
+  }
+  
+  .icon {
+    margin-bottom: 1rem;
+  }
+}
+
+// Drag and drop
 .drag-handle {
   cursor: grab;
   
@@ -32,26 +159,57 @@ body.theme-dark {
   }
 }
 
+// File dropzone
 .file-dropzone {
   border: 2px dashed $primary;
-  border-radius: 8px;
+  border-radius: 18px;
   transition: all 0.3s ease;
+  padding: 2rem;
+  background-color: rgba($blue-primary, 0.05);
   
   &.is-dragover {
-    border-color: $link;
-    background-color: rgba($primary, 0.1);
+    border-color: $green;
+    background-color: rgba($blue-primary, 0.08);
   }
 }
 
-.tool-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+// Button styling
+.button {
+  border-radius: 24px;
+  font-weight: 500;
+  transition: all 0.2s ease;
   
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  &.is-primary {
+    box-shadow: 0 1px 3px rgba($blue-primary, 0.3);
+    
+    &:hover {
+      box-shadow: 0 4px 8px rgba($blue-primary, 0.4);
+    }
   }
 }
 
+// Page transitions
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+// Progress styling
 .progress-container {
   position: relative;
   
