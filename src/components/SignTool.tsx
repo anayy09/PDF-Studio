@@ -5,6 +5,7 @@ import FileUpload from './FileUpload'
 import ProgressBar from './ProgressBar'
 import { useAppContext } from '../context/AppContext'
 import { downloadBlob, estimateProcessingTime } from '../utils/fileUtils'
+import { PDFDocument } from 'pdf-lib'
 
 const SignTool: React.FC = () => {
   const { t } = useTranslation()
@@ -105,17 +106,22 @@ const SignTool: React.FC = () => {
         await new Promise(resolve => setTimeout(resolve, 200))
       }
 
-      // Get signature from canvas
       const signatureCanvas = signatureCanvasRef.current
-      let signatureData = ''
-      if (signatureCanvas) {
-        signatureData = signatureCanvas.toDataURL()
-        console.log('Signature captured:', signatureData.length, 'bytes')
-      }
+      if (!signatureCanvas) throw new Error('Signature not found')
 
-      // In reality, you'd embed the signature into the PDF
+      const signatureData = signatureCanvas.toDataURL('image/png')
+
       const originalArrayBuffer = await file.arrayBuffer()
-      const blob = new Blob([originalArrayBuffer], { type: 'application/pdf' })
+      const pdfDoc = await PDFDocument.load(originalArrayBuffer)
+      const pngBytes = await fetch(signatureData).then(res => res.arrayBuffer())
+      const pngImage = await pdfDoc.embedPng(pngBytes)
+      const page = pdfDoc.getPage(0)
+      const { width } = page.getSize()
+      const sigWidth = 150
+      const sigHeight = (pngImage.height / pngImage.width) * sigWidth
+      page.drawImage(pngImage, { x: width - sigWidth - 50, y: 50, width: sigWidth, height: sigHeight })
+      const pdfBytes = await pdfDoc.save()
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' })
       
       setProgress(100)
       updateJobProgress(newJobId, 100)
