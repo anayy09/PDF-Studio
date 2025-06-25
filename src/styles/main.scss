@@ -1,0 +1,51 @@
+// Bulma theme customization
+$primary: #667eea;
+$link: #764ba2;
+$family-sans-serif: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+// Import Bulma
+@import "bulma/bulma.sass";
+
+// Minimal custom overrides
+.drag-handle {
+  cursor: grab;
+  
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.file-dropzone {
+  border: 2px dashed $primary;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &.is-dragover {
+    border-color: $link;
+    background-color: rgba($primary, 0.1);
+  }
+}
+
+.tool-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.progress-container {
+  position: relative;
+  
+  .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
